@@ -175,7 +175,7 @@ class SerializeWithOptionsTest < Test::Unit::TestCase
       end
 
       should "include the associated object" do
-        user_hash = Hash.from_xml(@user.to_xml(:with_reviews))
+        user_hash = Hash.from_xml(@user.to_xml(:flavor => :with_reviews))
         assert_equal @review.content, user_hash["user"]["reviews"].first["content"]
       end
 
