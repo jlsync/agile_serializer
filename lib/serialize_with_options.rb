@@ -75,8 +75,7 @@ module SerializeWithOptions
     private
 
     def parse_serialization_options(opts)
-      if opts.is_a? Symbol
-        set  = opts
+      if set = opts[:flavor]
         opts = {}
       else
         set  = :default

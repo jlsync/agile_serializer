@@ -153,18 +153,18 @@ class SerializeWithOptionsTest < Test::Unit::TestCase
     end
 
     should "accept a hash for includes directive" do
-      user_hash = Hash.from_xml(@user.to_xml(:with_comments))["user"]
+      user_hash = Hash.from_xml(@user.to_xml(:flavor => :with_comments))["user"]
       assert_equal @comment.content, user_hash["posts"].first["comments"].first["content"]
     end
 
     context "with a secondary configuration" do
       should "use it" do
-        user_hash = Hash.from_xml(@user.to_xml(:with_email))["user"]
+        user_hash = Hash.from_xml(@user.to_xml(:flavor => :with_email))["user"]
         assert_equal @user.email, user_hash["email"]
       end
 
       should "pass it through to included models" do
-        post_hash = Hash.from_xml(@post.to_xml(:with_email))["post"]
+        post_hash = Hash.from_xml(@post.to_xml(:flavor => :with_email))["post"]
         assert_equal @user.email, post_hash["user"]["email"]
       end
     end
@@ -202,13 +202,13 @@ class SerializeWithOptionsTest < Test::Unit::TestCase
       end
 
       should "find associations with multi-word names" do
-        user_hash = JSON.parse(@user.to_json(:with_check_ins))
+        user_hash = JSON.parse(@user.to_json(:flavor => :with_check_ins))
         assert_equal @check_in.code_name, user_hash['check_ins'].first['code_name']
       end
 
       should "respect xml formatting options" do
-        assert !@user.to_xml(:with_check_ins).include?('check-ins')
-        assert !@user.to_xml(:with_check_ins).include?('type=')
+        assert !@user.to_xml(:flavor => :with_check_ins).include?('check-ins')
+        assert !@user.to_xml(:flavor => :with_check_ins).include?('type=')
       end
     end
   end
