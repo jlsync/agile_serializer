@@ -1,3 +1,8 @@
+The fork
+========
+
+This fork changes the core behavior of SerializeWithOptions plugin, it follows deep relations so it's up to you to handle infinite recursions (SerializeWithOptions drops 1+ level relations). This repo is a work in progress so use it with care.
+
 SerializeWithOptions
 ====================
 
