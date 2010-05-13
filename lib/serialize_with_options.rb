@@ -4,7 +4,7 @@ module SerializeWithOptions
     configuration = read_inheritable_attribute(:configuration) || {}
     options       = read_inheritable_attribute(:options) || {}
 
-    configuration[set] = Config.new.instance_eval(&block)
+    configuration[set] = Config.new(configuration).instance_eval(&block)
 
     write_inheritable_attribute :configuration, configuration
     write_inheritable_attribute :options, options
@@ -50,7 +50,8 @@ module SerializeWithOptions
     undef_method :methods
     Instructions = [:skip_instruct, :dasherize, :skip_types, :root_in_json].freeze
 
-    def initialize
+    def initialize(conf)
+      @conf = conf
       @data = { :methods => nil, :only => nil, :except => nil }
     end
 
@@ -58,6 +59,12 @@ module SerializeWithOptions
       @data[method] = Instructions.include?(method) ? args.first : args
       @data
     end
+
+    def inherit(set)
+      raise "Not known configuration!" unless @conf[set]
+      @data = @conf[set].dup
+    end
+    
   end
 
   module InstanceMethods
