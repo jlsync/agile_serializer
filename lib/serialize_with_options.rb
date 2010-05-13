@@ -33,8 +33,7 @@ module SerializeWithOptions
           else
             begin
               klass = class_name.to_s.classify.constantize
-              hash[class_name] = klass.serialization_configuration(set)
-              hash[class_name][:include] = nil if hash[class_name].delete(:includes)
+              hash[class_name] = klass.serialization_options(set)
               hash
             rescue NameError
               hash.merge(class_name => { :include => nil })
