@@ -82,9 +82,11 @@ module SerializeWithOptions
 
     def parse_serialization_options(opts)
       if set = opts[:flavor]
-        opts = {}
+        new_opts = {}
+        root = opts[:root] and new_opts.merge!(:root => root)
       else
-        set  = :default
+        set = :default
+        new_opts = opts
       end
 
       [set, opts]
