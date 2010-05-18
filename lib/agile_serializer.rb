@@ -1,4 +1,4 @@
-module SerializeWithOptions
+module AgileSerializer
 
   def serialize_with_options(set = :default, &block)
     configuration = read_inheritable_attribute(:configuration) || {}

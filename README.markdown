@@ -1,7 +1,9 @@
-The fork
-========
+Agile Serializer, The fork
+==========================
 
-This fork changes the core behavior of SerializeWithOptions plugin, it follows deep relations so it's up to you to handle infinite recursions (SerializeWithOptions drops 1+ level relations). This repo is a work in progress so use it with care.
+This fork changes the core behavior of SerializeWithOptions plugin, it follows deep relations so it's up to you to handle infinite recursions (SerializeWithOptions drops 1+ level relations). This repo is a work in progress and the documentation isn't up to date so... use the source, Luke.
+
+    gem install agile_serializer
 
 SerializeWithOptions
 ====================
