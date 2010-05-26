@@ -32,7 +32,7 @@ module AgileSerializer
             hash.merge(class_name)
           else
             begin
-              klass = class_name.to_s.classify.constantize
+              klass = reflections[class_name].options[:class_name].constantize
               hash[class_name] = klass.serialization_options(set)
               hash
             rescue NameError
