@@ -78,9 +78,12 @@ module AgileSerializer
       super(self.class.serialization_options(set).deep_merge(opts))
     end
 
-    def as_json(opts = {})
+    def as_json(opts = nil)
+      opts ||= {}
       set, opts = parse_serialization_options(opts)
-      super(self.class.serialization_options(set).deep_merge(opts))
+      ser_opts = self.class.serialization_options(set)
+
+      super(ser_opts.deep_merge(opts))
     end
 
     private
