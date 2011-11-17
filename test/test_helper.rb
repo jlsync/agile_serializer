@@ -1,6 +1,4 @@
 require 'bundler/setup'
-lib = File.expand_path('../../lib/', __FILE__)
-$:.unshift lib unless $:.include?(lib)
 
 require 'active_record'
 require 'turn'
@@ -8,6 +6,8 @@ require 'shoulda'
 require 'json'
 require 'ap'
 
+lib = File.expand_path('../../lib/', __FILE__)
+$:.unshift lib unless $:.include?(lib)
 require 'agile_serializer'
 require 'agile_serializer/active_record'
 

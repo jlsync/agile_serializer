@@ -13,6 +13,7 @@ class User < ActiveRecord::Base
 
   serialize_with_options(:deep) do
     includes :check_ins
+    methods :post_count2
   end
 
   serialize_with_options(:with_email) do
@@ -33,6 +34,10 @@ class User < ActiveRecord::Base
   def post_count
     self.posts.count
   end
+
+  def post_count2
+    self.posts.count
+  end
 end
 
 class Post < ActiveRecord::Base
@@ -41,7 +46,7 @@ class Post < ActiveRecord::Base
 
   serialize_with_options do
     only :title
-    includes :user, :comments
+    includes :comments
   end
 
   serialize_with_options(:deep) do
@@ -77,65 +82,65 @@ class CheckIn < ActiveRecord::Base
 end
 
 class SerializeWithOptionsTest < Test::Unit::TestCase
-  def self.should_serialize_with_options
-    should "include active_record attributes" do
-      assert_equal @user.name, @user_hash["name"]
-    end
-
-    should "include specified methods" do
-      assert_equal @user.post_count, @user_hash["post_count"]
-    end
-
-    should "exclude specified attributes" do
-      assert_equal nil, @user_hash["email"]
-    end
-
-    should "exclude attributes not in :only list" do
-      assert_equal nil, @post_hash["content"]
-    end
-
-    should "include specified associations" do
-      assert_equal @post.title, @user_hash["posts"].first["title"]
-    end
-    
-    should "be identical in inherited model" do
-      assert_equal @post_hash["title"], @blog_post_hash["title"]
-    end
-    
-    should "include specified methods on associations" do
-      assert_equal @user.post_count, @post_hash["user"]["post_count"]
-    end
-
-    should "exclude specified methods on associations" do
-      assert_equal nil,  @post_hash["user"]["email"]
-    end
-
-    should "not include associations of associations" do
-      assert_equal nil, @user_hash["posts"].first["comments"]
-    end
-
-    should "include association without serialization options properly" do
-      assert_equal @comment.content, @post_hash["comments"].first["content"]
-    end
-    
-    should "override sets on inherited models" do
-      assert_equal nil, @blog_post_hash["comments"].first
-    end
+  def json(obj, opts={})
+    obj.as_json(opts).with_indifferent_access
   end
 
-  context "propagate includes" do
+  context "Serialize with options simple test" do
     setup do
       @user = User.create(:name => "John User", :email => "john@example.com")
       @post = @user.posts.create(:title => "Hello World!", :content => "Welcome to my blog.")
+      @blog_post = BlogPost.create(:title => "Hello World!", :content => "Welcome to my blog.")
       @checkin = @user.check_ins.create(:code_name => "Natasa")
+
+      [@user, @post, @blog_post, @checkin].map(&:reload)
     end
 
-    should "Include deep relations" do
-      post_hash = JSON.parse @post.to_json(:flavor => :deep)
-      assert_equal @user.email, post_hash["user"]["email"]
-      assert_equal @checkin.code_name, post_hash["user"]["check_ins"].first['code_name']
-    end
+    context "#default" do
+
+      setup do
+        @user_hash = json( @user )
+        @post_hash = json( @post )
+        @blog_post_hash = json( @blog_post )
+      end
+
+      should "include active_record attributes" do
+        assert_equal @user.name, @user_hash["name"]
+      end
+
+      should "include specified methods" do
+        assert_equal @user.post_count, @user_hash["post_count"]
+      end
+
+      should "exclude specified attributes" do
+        assert_equal nil, @user_hash["email"]
+      end
+
+      should "exclude attributes not in :only list" do
+        assert_equal nil, @post_hash["content"]
+      end
+
+      should "include specified associations" do
+        assert_equal @post.title, @user_hash["posts"].first["title"]
+      end
       
+      should "be identical in inherited model" do
+        assert_equal @post_hash["title"], @blog_post_hash["title"]
+      end
+    end
+    context "#deep" do
+      setup do
+        @post_hash = json( @post, :flavor => :deep )
+      end
+
+      should "include specified methods on associations" do
+        assert_equal @user.post_count2, @post_hash["user"]["post_count2"]
+      end
+
+      should "include specified associations of associations" do
+        assert_equal @checkin.code_name, @post_hash["user"]["check_ins"].first["code_name"]
+      end
+    end
   end
 
 end
