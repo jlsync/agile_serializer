@@ -10,4 +10,5 @@ group :test do
   gem 'json'
   gem 'turn', :require => nil
   gem 'awesome_print'
+  gem 'ruby-debug'
 end 
