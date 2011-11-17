@@ -1,17 +1,21 @@
-require 'rubygems'
+require 'bundler/setup'
+lib = File.expand_path('../../lib/', __FILE__)
+$:.unshift lib unless $:.include?(lib)
+
 require 'active_record'
-require 'test/unit'
+require 'turn'
 require 'shoulda'
 require 'json'
+require 'ap'
 
-$:.unshift(File.dirname(__FILE__) + '/../lib')
-require 'serialize_with_options'
-require File.dirname(__FILE__) + "/../init"
+require 'agile_serializer'
+require 'agile_serializer/active_record'
 
 ActiveRecord::Base.establish_connection(
   :adapter => 'sqlite3',
   :database => 'test.db'
 )
+ActiveRecord::Base.include_root_in_json = false
 
 [:users, :posts, :comments, :check_ins, :reviews].each do |table|
   ActiveRecord::Base.connection.drop_table table rescue nil
