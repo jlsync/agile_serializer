@@ -90,7 +90,7 @@ class SerializeWithOptionsTest < Test::Unit::TestCase
     setup do
       @user = User.create(:name => "John User", :email => "john@example.com")
       @post = @user.posts.create(:title => "Hello World!", :content => "Welcome to my blog.")
-      @blog_post = BlogPost.create(:title => "Hello World!", :content => "Welcome to my blog.")
+      @blog_post = @user.blog_posts.create(:title => "Hello World!", :content => "Welcome to my blog.")
       @checkin = @user.check_ins.create(:code_name => "Natasa")
 
       [@user, @post, @blog_post, @checkin].map(&:reload)
