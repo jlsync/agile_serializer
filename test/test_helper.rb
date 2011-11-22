@@ -1,5 +1,6 @@
 require 'bundler/setup'
 
+require 'logger'
 require 'active_record'
 require 'turn'
 require 'shoulda'
@@ -16,6 +17,7 @@ ActiveRecord::Base.establish_connection(
   :database => 'test.db'
 )
 ActiveRecord::Base.include_root_in_json = false
+ActiveRecord::Base.logger = Logger.new('test.log')
 
 [:users, :posts, :comments, :check_ins, :reviews].each do |table|
   ActiveRecord::Base.connection.drop_table table rescue nil
