@@ -27,6 +27,7 @@ module AgileSerializer
 
   def serialization_options(set)
     options = read_inheritable_attribute(:options)
+
     options[set] ||= serialization_configuration(set).tap do |opts|
       includes = opts.delete(:includes)
 
@@ -47,6 +48,7 @@ module AgileSerializer
         end
       end
     end
+
     write_inheritable_attribute :options, options
     options[set]
   end
@@ -69,7 +71,7 @@ module AgileSerializer
       raise "Not known configuration!" unless @conf[set]
       @data = @conf[set].dup
     end
-    
+
   end
 
   module InstanceMethods

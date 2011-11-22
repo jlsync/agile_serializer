@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
   has_many :posts
   has_many :blog_posts
   has_many :check_ins
-  
+
   serialize_with_options do
     methods   :post_count
     includes  :posts
@@ -24,7 +24,7 @@ class User < ActiveRecord::Base
   serialize_with_options(:with_comments) do
     includes  :posts => { :include => :comments }
   end
-  
+
   serialize_with_options(:with_check_ins) do
     includes :check_ins
     dasherize false
@@ -62,6 +62,8 @@ class BlogPost < Post
   serialize_with_options(:with_email) do
     includes :user
   end
+
+
 end
 
 class Comment < ActiveRecord::Base
@@ -123,11 +125,12 @@ class SerializeWithOptionsTest < Test::Unit::TestCase
       should "include specified associations" do
         assert_equal @post.title, @user_hash["posts"].first["title"]
       end
-      
+
       should "be identical in inherited model" do
         assert_equal @post_hash["title"], @blog_post_hash["title"]
       end
     end
+
     context "#deep" do
       setup do
         @post_hash = json( @post, :flavor => :deep )
