@@ -4,20 +4,25 @@ module AgileSerializer
     require 'agile_serializer/railtie'
   end
 
+  def self.extended(base)
+    base.class_attribute(:configuration)
+    base.class_attribute(:options)
+  end
+
   def serialize_with_options(set = :default, &block)
-    configuration = read_inheritable_attribute(:configuration) || {}
-    options       = read_inheritable_attribute(:options) || {}
+    configuration = self.configuration || {}
+    options       = self.options || {}
 
     configuration[set] = Config.new(configuration).instance_eval(&block)
 
-    write_inheritable_attribute :configuration, configuration
-    write_inheritable_attribute :options, options
+    self.configuration = configuration
+    self.options = options
 
     include InstanceMethods
   end
 
   def serialization_configuration(set)
-    configuration = read_inheritable_attribute(:configuration)
+    configuration = self.configuration
     conf = if configuration
       configuration[set] || configuration[:default]
     end
@@ -26,7 +31,7 @@ module AgileSerializer
   end
 
   def serialization_options(set)
-    options = read_inheritable_attribute(:options)
+    options = self.options
 
     options[set] ||= serialization_configuration(set).tap do |opts|
       includes = opts.delete(:includes)
@@ -49,7 +54,7 @@ module AgileSerializer
       end
     end
 
-    write_inheritable_attribute :options, options
+    self.options = options
     options[set]
   end
 
