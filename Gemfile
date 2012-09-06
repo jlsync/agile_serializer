@@ -3,7 +3,7 @@ source :rubygems
 gemspec
 
 group :test do
-  gem 'activerecord', '>= 3.2'
+  gem 'activerecord', '~> 3.0.16'
 #  gem 'test-unit', :require => 'test/unit'
   gem 'sqlite3'
   gem 'shoulda'
