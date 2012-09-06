@@ -5,24 +5,24 @@ module AgileSerializer
   end
 
   def self.extended(base)
-    base.class_attribute(:configuration)
-    base.class_attribute(:options)
+    base.class_attribute(:serializer_configuration)
+    base.class_attribute(:serializer_options)
   end
 
   def serialize_with_options(set = :default, &block)
-    configuration = self.configuration || {}
-    options       = self.options || {}
+    configuration = self.serializer_configuration ? self.serializer_configuration.dup : {}
+    options       = self.serializer_options ? self.serializer_options.dup : {}
 
     configuration[set] = Config.new(configuration).instance_eval(&block)
 
-    self.configuration = configuration
-    self.options = options
+    self.serializer_configuration = configuration
+    self.serializer_options = options
 
     include InstanceMethods
   end
 
   def serialization_configuration(set)
-    configuration = self.configuration
+    configuration = self.serializer_configuration
     conf = if configuration
       configuration[set] || configuration[:default]
     end
@@ -31,7 +31,7 @@ module AgileSerializer
   end
 
   def serialization_options(set)
-    options = self.options
+    options = self.serializer_options
 
     options[set] ||= serialization_configuration(set).tap do |opts|
       includes = opts.delete(:includes)
@@ -54,7 +54,7 @@ module AgileSerializer
       end
     end
 
-    self.options = options
+    self.serializer_options = options
     options[set]
   end
 
