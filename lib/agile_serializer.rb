@@ -10,8 +10,8 @@ module AgileSerializer
   end
 
   def serialize_with_options(set = :default, &block)
-    configuration = self.serializer_configuration ? self.serializer_configuration.dup : {}
-    options       = self.serializer_options ? self.serializer_options.dup : {}
+    configuration = self.serializer_configuration.try(:dup) || {}
+    options       = self.serializer_options.try(:dup) || {}
 
     configuration[set] = Config.new(configuration).instance_eval(&block)
 
