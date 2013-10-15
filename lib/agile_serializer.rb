@@ -64,11 +64,16 @@ module AgileSerializer
 
     def initialize(conf)
       @conf = conf
-      @data = { :methods => nil, :only => nil, :except => nil }
+      @data = { :methods => nil, :only => nil, :except => nil , :moves => nil}
     end
 
     def method_missing(method, *args)
       @data[method] = Instructions.include?(method) ? args.first : args
+      @data
+    end
+
+    def move(map)
+      @data[:moves] = map
       @data
     end
 
@@ -82,15 +87,28 @@ module AgileSerializer
   module InstanceMethods
     def to_xml(opts = {})
       set, opts = parse_serialization_options(opts)
-      super(self.class.serialization_options(set).deep_merge(opts))
+      ser_opts = self.class.serialization_options(set)
+      if ser_opts[:moves]
+        raise "Moves are not supported for xml!"
+      end
+
+      super(ser_opts.deep_merge(opts))
     end
 
     def as_json(opts = nil)
       opts ||= {}
       set, opts = parse_serialization_options(opts)
       ser_opts = self.class.serialization_options(set)
+      moves = ser_opts[:moves] || {}
 
-      super(ser_opts.deep_merge(opts))
+      final_opts = ser_opts.deep_merge(opts)
+      super(final_opts).with_indifferent_access.tap do |result|
+        moves.each_pair {|from, to|
+          raise "Cannot move not existing field #{from}" if !result.has_key?(from)
+          result[to] = result[from]
+          result.delete(from)
+        }
+      end
     end
 
     private
